@@ -35,3 +35,7 @@ Drawings::~Drawings()
 void Drawings::setColour(int r, int g, int b) {
 
 }
+
+void Drawings::setColour(char* rgb){
+
+}

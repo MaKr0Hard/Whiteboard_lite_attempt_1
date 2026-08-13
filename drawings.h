@@ -22,6 +22,7 @@ public:
      */
     ~Drawings();
     void setColour(int r, int g, int b);
+    void setColour(char* rgb);
 };
 
 #endif // DRAWINGS_H
