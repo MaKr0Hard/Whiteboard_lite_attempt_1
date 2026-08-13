@@ -21,7 +21,7 @@ public:
      * Destructor
      */
     ~Drawings();
-
+    void setColour(int r, int g, int b);
 };
 
 #endif // DRAWINGS_H

@@ -49,7 +49,7 @@ int newwindow (int argc, char** argv, int* closed_state) {
     main_hbox = IupHbox(vbox, list_of_files, NULL);
     dlg = IupDialog(main_hbox);
     IupSetAttribute(dlg, "TITLE", "Bienvenue !");
-
+    IupSetAttribute(dlg, "SIZE", "100 x 100");
     IupShow(dlg);
     IupMainLoop();
     IupClose();

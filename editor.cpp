@@ -6,9 +6,14 @@
 //#include "MyCanvasBox.h"
 extern "C" {
 #include "drawings_utils.h"
-
 }
-//#include <cdiup.h>
+#include <cdiup.h>
+
+static int red_cb() {
+
+    return IUP_DEFAULT;
+}
+
 Editor::Editor()
 {
 
@@ -23,16 +28,12 @@ void quit_cb() {
     exit(0);
 }
 
-void detached_cb() {
 
-}
 
 int Editor::neweditor(int argc, char** argv)
 {
 
-#if defined(__linux__) || defined(__unix__)
-    setenv("GDK_BACKEND", "x11", 1);
-#endif
+
 
     IupOpen(&argc, &argv);
     //cdInitContextPlus();
@@ -41,11 +42,17 @@ int Editor::neweditor(int argc, char** argv)
     Ihandle *subm1;
     Ihandle* btn;
     Ihandle *db_hb;
-    //my_canvas_box_init_env(&argc, &argv);
+    Iup::Hbox *colours = new Iup::Hbox;
+    Ihandle *red;
+    red = IupButton("Rouge", NULL);
+    colours->Append(red);
+    IupSetCallback(red, "ACTION", (Icallback)red_cb);
+
+
     Drawings *d = new Drawings(argc, argv);
     btn = IupButton(NULL, NULL);
 
-    Ihandle* box = my_canvas_box_create();
+
 
     IupSetAttribute(btn, "BGCOLOR", "255 0 0");
     item_quit = IupItem("Quitter", NULL);
@@ -53,7 +60,7 @@ int Editor::neweditor(int argc, char** argv)
     file_menu = IupMenu(item_quit, NULL);
     subm1 = IupSubmenu("Fichier", file_menu);
     menu_bar = IupMenu(subm1, NULL);
-    main_vbox = IupVbox(btn, d->GetHandle(), box, NULL); //TODO :fix that ugly segfault when appending
+    main_vbox = IupVbox(colours->GetHandle(), d->GetHandle(),  NULL); //DONE
     dlg = IupDialog(main_vbox);
     IupSetAttributeHandle(dlg, "MENU", menu_bar);
     IupShow(dlg);

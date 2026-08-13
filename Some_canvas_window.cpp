@@ -1,4 +1,4 @@
-#include "MyCanvasBox.h"
+#include "MyCanvasBox.h" //TODO: delete all that crap plus the headers
 #include <cstdlib>
 #include <iostream>
 

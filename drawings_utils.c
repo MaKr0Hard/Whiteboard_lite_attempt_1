@@ -60,7 +60,7 @@ static int unmap_cb(Ihandle* canvas)
 }
 
 
-Ihandle* my_canvas_box_create(void)
+Ihandle* canvas_box_create(void)
 {
     Ihandle* canvas = IupCanvas(NULL);
     IupSetAttribute(canvas, "RASTERSIZE", "300x200");
