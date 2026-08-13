@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+Ihandle* canvas;
+
+
 
 static int action_redraw_cb(Ihandle* canvas)
 {
@@ -62,7 +65,7 @@ static int unmap_cb(Ihandle* canvas)
 
 Ihandle* canvas_box_create(void)
 {
-    Ihandle* canvas = IupCanvas(NULL);
+    canvas = IupCanvas(NULL);
     IupSetAttribute(canvas, "RASTERSIZE", "300x200");
     IupSetAttribute(canvas, "EXPAND", "YES");
 
@@ -74,3 +77,4 @@ Ihandle* canvas_box_create(void)
 
     return vbox;
 }
+

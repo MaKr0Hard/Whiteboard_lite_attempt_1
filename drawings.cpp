@@ -14,15 +14,13 @@ extern "C" {
 }
 
 
-
+Ihandle* cvas;
 //cdCanvas *cdcan;
 //Ihandle* iupcan;
 
 Drawings::Drawings(int argc, char** argv) : Iup::Vbox(IupVbox(NULL))
 {
-
-
-    Ihandle* cvas = canvas_box_create();
+    cvas = canvas_box_create();
     this->Append(cvas);
 
 }
@@ -39,3 +37,7 @@ void Drawings::setColour(int r, int g, int b) {
 void Drawings::setColour(char* rgb){
 
 }
+
+/*void Drawings::draw_plus() {
+    action_redraw_cb_plus();
+}*/

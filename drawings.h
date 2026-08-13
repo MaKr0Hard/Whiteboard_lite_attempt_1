@@ -23,6 +23,7 @@ public:
     ~Drawings();
     void setColour(int r, int g, int b);
     void setColour(char* rgb);
+    //void draw_plus();
 };
 
 #endif // DRAWINGS_H

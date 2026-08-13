@@ -13,6 +13,7 @@ typedef struct {
  * Crée et retourne une IupVbox contenant le Canvas CD.
  * Le composant retourné peut être directement passé à IupAppend().
  */
+//int action_redraw_cb_plus();
 Ihandle* canvas_box_create(void);
 
 

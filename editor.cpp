@@ -14,16 +14,22 @@ extern "C" {
 
 Drawings *d;
 
-Ihandle* create_a_colr_from_image(int w, int h, int r, int g, int b){
-    std::vector <unsigned char> pixx;
-    unsigned char pix[w * h * 3]; //all the pixels
-    for (int i = 0; i < (w * h); i++) {
+Ihandle* create_a_colr_from_image(int w, int h, unsigned char r, unsigned char g, unsigned char b){
+    std::vector <unsigned char> pixx(w * h * 3);
+    //unsigned char pix[w * h * 3]; //all the pixels
+    /*for (int i = 0; i < (w * h); i++) {
         pix[i * 3] = r;
         pix[i * 3 + 1] = g;
         pix[i * 3 + 2] = b;
 
+    }*/ //TODO : find a c way to get this working cuz std::vector is heavvy
+
+    for (size_t i = 0; i < pixx.size(); i += 3) {
+        pixx[i]     = r;
+        pixx[i + 1] = g;
+        pixx[i + 2] = b;
     }
-    return IupImage(w, h, pix);
+    return IupImageRGB(w, h, pixx.data());
 }
 
 Ihandle* create_a_colr_from_image_from_string(int w, int h, char* col) {
@@ -68,6 +74,7 @@ Ihandle* create_a_colr_from_image_from_string(int w, int h, char* col) {
     handle = create_a_colr_from_image(w, h, r, g, b);
     return handle;
 } //TODO : Fix
+//I don't think I'll ever nee this, I'll come up with my own stuff
 
 static int colr_cb(Ihandle *ih) {
     //exit(0);
@@ -93,6 +100,19 @@ void quit_cb() {
 
 
 
+typedef struct {
+    Ihandle* btn;
+    Colour col;
+} Col_btn;
+
+Col_btn colbtn (Ihandle *btn, int r, int g, int b) {
+    Col_btn cbtn;
+    cbtn.btn = btn;
+    cbtn.col.R = r;
+    cbtn.col.G = g;
+    cbtn.col.B = b;
+    return cbtn;
+}
 
 int Editor::neweditor(int argc, char** argv)
 {
@@ -105,38 +125,31 @@ int Editor::neweditor(int argc, char** argv)
     Ihandle* btn;
     Ihandle *db_hb;
     Iup::Hbox *colours = new Iup::Hbox;
-    std::vector <Ihandle *> all_colour_btns;
-#define ACB all_colour_btns
+    std::vector <Col_btn> all_colour_btns;
+#define ACB all_colour_btns.btn
 
-
-    all_colour_btns.push_back(IupButton("Rouge", NULL));
-    all_colour_btns.push_back(IupButton("Vert", NULL));
-    all_colour_btns.push_back(IupButton("Bleu", NULL));
-    all_colour_btns.push_back(IupButton("Noir", NULL));
-    all_colour_btns.push_back(IupButton("Orange", NULL));
-    all_colour_btns.push_back(IupButton("Jaune", NULL));
+    all_colour_btns.push_back(colbtn(IupButton(NULL, NULL), 255, 0, 0));
+    all_colour_btns.push_back(colbtn(IupButton(NULL, NULL), 0, 255, 0));
+    all_colour_btns.push_back(colbtn(IupButton(NULL, NULL), 0, 0, 255));
+    all_colour_btns.push_back(colbtn(IupButton(NULL, NULL), 0, 0, 0));
+    //all_colour_btns.push_back(IupButton("Orange", NULL));
+    /*all_colour_btns.push_back(IupButton("Jaune", NULL));
     all_colour_btns.push_back(IupButton("Violet", NULL));
     all_colour_btns.push_back(IupButton("Blanc", NULL));
     all_colour_btns.push_back(IupButton("Bleu clair", NULL));
-    all_colour_btns.push_back(IupButton("Gris", NULL));
+    all_colour_btns.push_back(IupButton("Gris", NULL));*/
     //char colr[25] = "255 0 0";
-    Ihandle* colrr = create_a_colr_from_image(48, 48, 254, 254, 0);
-    IupSetAttribute(ACB[0], "COLOURCODE", "255 0 0");
-    IupSetAttributeHandle(ACB[0], "IMAGE", colrr);
-    IupSetAttribute(ACB[1], "COLOURCODE", "255 0 0");
-    IupSetAttribute(ACB[2], "COLOURCODE", "255 0 0");
-    IupSetAttribute(ACB[3], "COLOURCODE", "255 0 0");
-    IupSetAttribute(ACB[4], "COLOURCODE", "255 0 0");
-    IupSetAttribute(ACB[5], "COLOURCODE", "255 0 0");
-    IupSetAttribute(ACB[6], "COLOURCODE", "255 0 0");
-    IupSetAttribute(ACB[7], "COLOURCODE", "255 0 0");
-    IupSetAttribute(ACB[8], "COLOURCODE", "255 0 0");
-    IupSetAttribute(ACB[9], "COLOURCODE", "255 0 0");
+
+    //IupSetAttribute(all_colour_btns[0].btn, "COLOURCODE", "255 0 0");
+
+
 
     for (int i = 0; i < all_colour_btns.size(); i++) {
-        colours->Append(all_colour_btns[i]);
+        Ihandle* colrr = create_a_colr_from_image(24, 24, all_colour_btns[i].col.R, all_colour_btns[i].col.G, all_colour_btns[i].col.B);
+        IupSetAttributeHandle(all_colour_btns[i].btn, "IMAGE", colrr);
+        colours->Append(all_colour_btns[i].btn);
     }
-    IupSetCallback(all_colour_btns[0], "ACTION", (Icallback)colr_cb);
+    IupSetCallback(all_colour_btns[0].btn, "ACTION", (Icallback)colr_cb);
 
 
 
