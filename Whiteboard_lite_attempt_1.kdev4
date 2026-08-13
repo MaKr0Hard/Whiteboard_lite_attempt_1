@@ -1,3 +1,4 @@
 [Project]
+CreatedFrom=CMakeLists.txt
+Manager=KDevCMakeManager
 Name=Whiteboard_lite_attempt_1
-Manager=KDevGenericManager
