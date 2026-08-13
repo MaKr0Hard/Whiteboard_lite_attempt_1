@@ -13,5 +13,5 @@ target_include_directories(Whiteboard_lite_attempt_1 PRIVATE /usr/include/iup /u
 target_link_directories(Whiteboard_lite_attempt_1 PRIVATE /usr/lib64)
 
 # link -liup
-target_link_libraries(Whiteboard_lite_attempt_1 PRIVATE iupcd iup cd)
+target_link_libraries(Whiteboard_lite_attempt_1 PRIVATE iupcd  iup cd  X11 m)
 

@@ -3,13 +3,12 @@
 #include "drawings.h"
 #include <iup/iup_plus.h>
 #include <cd.h>
-#include <cdiup.h>
 #include <iup.h>
 #include <cstdlib>
 #include <iup.h>
 #include <iupcontrols.h>
 #include <cd.h>
-#include <cdiup.h>
+
 extern "C" {
 #include "drawings_utils.h"
 }

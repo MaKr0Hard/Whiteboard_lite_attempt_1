@@ -3,10 +3,12 @@
 #include "editor.h"
 //#include <iup/iup_plus.h>
 #include "drawings.h"
-#include "MyCanvasBox.h"
+//#include "MyCanvasBox.h"
 extern "C" {
 #include "drawings_utils.h"
+
 }
+//#include <cdiup.h>
 Editor::Editor()
 {
 
@@ -27,17 +29,19 @@ void detached_cb() {
 
 int Editor::neweditor(int argc, char** argv)
 {
+
 #if defined(__linux__) || defined(__unix__)
     setenv("GDK_BACKEND", "x11", 1);
 #endif
 
     IupOpen(&argc, &argv);
+    //cdInitContextPlus();
     Ihandle *dlg, *main_vbox, *menu_bar;
     Ihandle *file_menu, *item_quit;
     Ihandle *subm1;
     Ihandle* btn;
     Ihandle *db_hb;
-
+    //my_canvas_box_init_env(&argc, &argv);
     Drawings *d = new Drawings(argc, argv);
     btn = IupButton(NULL, NULL);
 

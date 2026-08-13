@@ -4,9 +4,12 @@ extern "C" {
 }
 #include "editor.h"
 #include <cstdio>
+#include <cstdlib>
 
 int main(int argc, char** argv ) {
-
+    #if defined(__linux__) || defined(__unix__)
+    setenv("GDK_BACKEND", "x11", 1);
+    #endif
     int closed_state = 0; //just stores what to do next
     closed_state = newwindow(argc, argv, &closed_state);
     switch (closed_state) {
