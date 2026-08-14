@@ -33,11 +33,11 @@ typedef struct {
 std::vector <Stroke> last_strokes;
 
 
-void newvec(long int colour) {
+void newvec(long int colour, int width) { // If you want to push_back info for a STROKE
     Stroke s;
     s.points = std::vector <Point> ({});
     s.colour = colour;
-    s.width = 1;
+    s.width = width;
     last_strokes.push_back(s);
     //last_points = std::vector <Point> ({});
 }
@@ -58,9 +58,9 @@ void redraw_plus() { // a better redraw **MAGIC**
                 change_colour_iup_canvas(last_strokes[i].colour);
             if ((p.x == last_strokes[i].points[j].x) && (p.y == last_strokes[i].points[j].y))  {
 
-                pointat(last_strokes[i].points[j].x, last_strokes[i].points[j].y, last_strokes[i].colour);
+                pointat(last_strokes[i].points[j].x, last_strokes[i].points[j].y, last_strokes[i].colour, last_strokes[i].width);
             } else {
-                lineat(p.x, p.y, last_strokes[i].points[j].x, last_strokes[i].points[j].y, last_strokes[i].colour);
+                lineat(p.x, p.y, last_strokes[i].points[j].x, last_strokes[i].points[j].y, last_strokes[i].colour, last_strokes[i].width);
                 p.x = last_strokes[i].points[j].x;
                 p.y = last_strokes[i].points[j].y;
             }
@@ -68,7 +68,7 @@ void redraw_plus() { // a better redraw **MAGIC**
     }
 }
 
-void point_at(int x, int y, long int colour) {
+void point_at(int x, int y, long int colour, int width) { // If you want push_back info point by point
     //printf("Mouse moved to (%d, %d)\n", x, y);
     Point point;
     //change_colour_iup_canvas();
@@ -76,7 +76,7 @@ void point_at(int x, int y, long int colour) {
     point.y = y;
     //last_points.push_back(point);
     last_strokes[last_strokes.size() - 1].points.push_back(point);  // just .size() segfaults but with a " - 1 " it runs like fine whime
-    pointat(x, y, colour);
+    pointat(x, y, colour, width);
 }
 
 Drawings::Drawings(int argc, char** argv) : Iup::Vbox(IupVbox(NULL))
@@ -105,4 +105,8 @@ void Drawings::setColour(char* rgb){
 void Drawings::setColour(long int colour) {
     set_canvas_colour(colour);
 
+}
+
+void Drawings::setWidth(int width) {
+    set_width_stroke(width);
 }

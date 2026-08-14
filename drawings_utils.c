@@ -3,33 +3,36 @@
 #include <stdlib.h>
 #include "drawings_c.h"
 
+
 Ihandle* canvas;
 cdCanvas* cd_canvas;
 long int cv_color = 0; //short for canvas colour
 //long int cv_color = 0;
-int test = 0;
+int test = 0; //TODO : change this var name (I should have named it foo in the first place)
 int newvec_already_done = 0;
 int first_point = 1;
 int width_stroke = 0;
 
-void change_colour_iup_canvas(long int clr) {
+void change_colour_iup_canvas(long int clr) { //TODO : Remove that
     cv_color = clr;
     cdCanvasSetForeground(cd_canvas, cv_color);
 }
 
-void set_canvas_colour(long int clr) {
+void set_canvas_colour(long int clr) { // line 15 is basically the same thing
     cv_color = clr;
     cdCanvasSetForeground(cd_canvas, cv_color);
 }
 
 void set_width_stroke (int width) {
     width_stroke = width;
+    cdCanvasLineWidth(cd_canvas, width);
+    cdCanvasMarkSize(cd_canvas, width);
 }
 
-void lineat(int x1, int y1, int x2, int y2, long int colour) {
+void lineat(int x1, int y1, int x2, int y2, long int colour, int width) {
     int height;
     cdCanvasSetForeground(cd_canvas, colour);
-    cdCanvasLineWidth(cd_canvas, width_stroke);
+    cdCanvasLineWidth(cd_canvas, width);
     cdCanvasGetSize(cd_canvas, NULL, &height, NULL, NULL);
     cdCanvasLineJoin(cd_canvas, CD_CIRCLE);
     int new_y1 = height - y1 - 1;
@@ -48,11 +51,11 @@ int resize_cb(Ihandle *ih) {
 return IUP_DEFAULT;
 }
 
-void pointat(int x, int y, long int colour) {
+void pointat(int x, int y, long int colour, int width) {
     int height;
     cdCanvasGetSize(cd_canvas, NULL, &height, NULL, NULL);
     cdCanvasSetForeground(cd_canvas, colour);
-    cdCanvasMarkSize(cd_canvas, width_stroke); /* Dot diameter in pixels */
+    cdCanvasMarkSize(cd_canvas, width); /* Dot diameter in pixels */
     cdCanvasMarkType(cd_canvas, CD_CIRCLE); /* Solid dot style */
 
     int new_y = height - y - 1;
@@ -63,6 +66,7 @@ int motion_cb(Ihandle* ih, int x, int y, char* status) {
 
 
     if (iup_isbutton1(status)) {
+
         if (first_point == 1) {
             /*cdCanvasSetForeground(cd_canvas, cv_color);
             cdCanvasMarkSize(cd_canvas, 10); /* Dot diameter in pixels */
@@ -70,14 +74,15 @@ int motion_cb(Ihandle* ih, int x, int y, char* status) {
 
             /*cdCanvasMark(cd_canvas, x, y);*/
 
-            newvec(cv_color);
-            point_at(x, y, cv_color);
+            newvec(cv_color, width_stroke);
+            point_at(x, y, cv_color, width_stroke);
             first_point = 0;
         } else {
             //nothing for now
-            point_at(x, y, cv_color);
+            point_at(x, y, cv_color, width_stroke);
             first_point = 0;
         }
+
 
     } else {
         first_point = 1;
@@ -129,7 +134,8 @@ static int action_redraw_cb(Ihandle* canvas)
         // Sauvegarde du pointeur dans les attributs IUP
         IupSetAttribute(canvas, "_CD_CANVAS", (char*)cd_canvas);
     }
-    long int cv_colour2 = cv_color;
+    long int cv_colour2 = cv_color; //TODO : See if i also need this manipulation for the width
+    int width_stroke_2 = width_stroke;
     // Suite du dessin...
     cdCanvasActivate(cd_canvas);
     if (test == 0) {
@@ -147,6 +153,7 @@ static int action_redraw_cb(Ihandle* canvas)
     redraw_plus();
     //redraw();
     cv_color = cv_colour2;
+    width_stroke = width_stroke_2;
     cdCanvasSetForeground(cd_canvas, cv_color); //TODO : Clean that mess
     return IUP_DEFAULT;
 }
@@ -170,7 +177,7 @@ Ihandle* canvas_box_create(void)
     IupSetAttribute(canvas, "RASTERSIZE", "300x200");
     IupSetAttribute(canvas, "EXPAND", "YES");
     IupSetCallback(canvas, "RESIZE_CB", (Icallback)resize_cb);
-    newvec(cv_color);
+    newvec(cv_color, width_stroke);
     IupSetCallback(canvas, "ACTION", (Icallback)action_redraw_cb);
     IupSetCallback(canvas, "UNMAP_CB", (Icallback)unmap_cb);
     IupSetCallback(canvas, "MOTION_CB", (Icallback)motion_cb);

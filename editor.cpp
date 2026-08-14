@@ -32,7 +32,7 @@ Ihandle* create_a_colr_from_image(int w, int h, unsigned char r, unsigned char g
     return IupImageRGB(w, h, pixx.data());
 }
 
-Ihandle* create_a_colr_from_image_from_string(int w, int h, char* col) {
+Ihandle* create_a_colr_from_image_from_string(int w, int h, char* col) { // This shit now useless when delete ?
     Ihandle* handle;
     int r;
     int g;
@@ -75,6 +75,22 @@ Ihandle* create_a_colr_from_image_from_string(int w, int h, char* col) {
     return handle;
 } //TODO : Fix
 //I don't think I'll ever nee this, I'll come up with my own stuff
+
+static int slider_moved_cb(Ihandle *ih) {
+
+    char width_char[30];
+    strcpy(width_char, IupGetAttribute(ih, "VALUE"));
+    int width = atoi(width_char);
+    Ihandle* textview = IupGetAttributeHandle(ih, "TEXTVIEW");
+    char title[20];
+    if (textview != NULL) {
+    sprintf(title, "%d", width);
+    IupSetAttribute(textview, "TITLE", title);
+    }
+    //printf("%d\n", width);
+    d->setWidth(width);
+    return IUP_DEFAULT;
+}
 
 static int colr_cb(Ihandle *ih) {
     //exit(0);
@@ -135,6 +151,7 @@ int Editor::neweditor(int argc, char** argv)
     Ihandle *subm1;
     Ihandle* btn;
     Ihandle *db_hb;
+    Ihandle *slider, *textview_sli;
     Iup::Hbox *colours = new Iup::Hbox;
     std::vector <Col_btn> all_colour_btns;
 #define ACB all_colour_btns.btn
@@ -162,9 +179,15 @@ int Editor::neweditor(int argc, char** argv)
         IupSetCallback(all_colour_btns[i].btn, "ACTION", (Icallback)colr_cb);
         colours->Append(all_colour_btns[i].btn);
     }
-
-
-
+    slider = IupVal(IUP_HORIZONTAL);
+    textview_sli = IupLabel(NULL);
+    IupSetAttribute(slider, "MIN", "1");
+    IupSetAttribute(slider, "MAX", "100");
+    IupSetAttribute(slider, "SIZE", "150x1");
+    IupSetCallback(slider, "VALUECHANGED_CB", (Icallback)slider_moved_cb);
+    IupSetAttributeHandle(slider, "TEXTVIEW", textview_sli);
+    colours->Append(slider);
+    colours->Append(textview_sli); //TODO : Add a drop btn to choose precision or type number out yourself
 
     d = new Drawings(argc, argv);
 
