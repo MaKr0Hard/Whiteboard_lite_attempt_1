@@ -23,7 +23,7 @@ Ihandle* cvas;
 
 
 
-std::vector <Point> last_points;
+//std::vector <Point> last_points;
 typedef struct {
     std::vector <Point> points;
     int width;
@@ -32,23 +32,24 @@ typedef struct {
 } Stroke;
 std::vector <Stroke> last_strokes;
 
+
 void newvec(long int colour) {
     Stroke s;
-    s.points = last_points;
+    s.points = std::vector <Point> ({});
     s.colour = colour;
-    s.width = 0;
+    s.width = 1;
     last_strokes.push_back(s);
-    last_points = std::vector <Point> ({});
+    //last_points = std::vector <Point> ({});
 }
 
-void redraw() {
+/*void redraw() {
 
     for (int i = 0; i < last_points.size(); i++) {
-        pointat(last_points[i].x, last_points[i].y);
+        pointat(last_points[i].x, last_points[i].y, 0);
     }
-}
+}*/
 
-void redraw_plus() {
+void redraw_plus() { // a better redraw **MAGIC**
     for (int i = 0; i < last_strokes.size(); i++) {
         Point p;
         p.x = last_strokes[i].points[0].x;
@@ -57,9 +58,9 @@ void redraw_plus() {
                 change_colour_iup_canvas(last_strokes[i].colour);
             if ((p.x == last_strokes[i].points[j].x) && (p.y == last_strokes[i].points[j].y))  {
 
-                pointat(p.x, p.y);
+                pointat(last_strokes[i].points[j].x, last_strokes[i].points[j].y, last_strokes[i].colour);
             } else {
-                lineat(p.x, p.y, last_strokes[i].points[j].x, last_strokes[i].points[j].y);
+                lineat(p.x, p.y, last_strokes[i].points[j].x, last_strokes[i].points[j].y, last_strokes[i].colour);
                 p.x = last_strokes[i].points[j].x;
                 p.y = last_strokes[i].points[j].y;
             }
@@ -67,14 +68,15 @@ void redraw_plus() {
     }
 }
 
-void point_at(int x, int y) {
+void point_at(int x, int y, long int colour) {
     //printf("Mouse moved to (%d, %d)\n", x, y);
     Point point;
-    change_colour_iup_canvas(cdEncodeColor(255, 0, 0));
+    //change_colour_iup_canvas();
     point.x = x;
     point.y = y;
-    last_points.push_back(point);
-    pointat(x, y);
+    //last_points.push_back(point);
+    last_strokes[last_strokes.size() - 1].points.push_back(point);  // just .size() segfaults but with a " - 1 " it runs like fine whime
+    pointat(x, y, colour);
 }
 
 Drawings::Drawings(int argc, char** argv) : Iup::Vbox(IupVbox(NULL))
