@@ -1,14 +1,68 @@
 #include "drawings_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "drawings_c.h"
 
 Ihandle* canvas;
+cdCanvas* cd_canvas;
+long int cv_color; //short for canvas colour
+
+void set_colour_canvas (long int col) {
+        cv_color = col;
+        cdCanvasForeground(cd_canvas, col);
+}
+
+void pointat(int x, int y) {
+    int height;
+    cdCanvasGetSize(cd_canvas, NULL, &height, NULL, NULL);
+    cdCanvasSetForeground(cd_canvas, cv_color);
+    cdCanvasMarkSize(cd_canvas, 10); /* Dot diameter in pixels */
+    cdCanvasMarkType(cd_canvas, CD_CIRCLE); /* Solid dot style */
+
+    int new_y = height - y - 1;
+    cdCanvasMark(cd_canvas, x, new_y);
+}
+
+int motion_cb(Ihandle* ih, int x, int y, char* status) {
+    int first_point = 1;
+
+    if (iup_isbutton1(status)) {
+        if (first_point == 1) {
+            /*cdCanvasSetForeground(cd_canvas, cv_color);
+            cdCanvasMarkSize(cd_canvas, 10); /* Dot diameter in pixels */
+            /*cdCanvasMarkType(cd_canvas, CD_CIRCLE); /* Solid dot style */
+
+            /*cdCanvasMark(cd_canvas, x, y);*/
 
 
+            point_at(x, y);
+        } else {
+            //nothing for now
+        }
+        first_point = 0;
+    } else {
+        first_point = 1;
+    }
+
+    return IUP_DEFAULT;
+}
+
+void do_a_mark(int x, int y) {
+
+}
+
+int update_canvas() {
+    IupUpdate(canvas);
+    return IUP_DEFAULT;
+}
+
+void change_colour_iup_canvas(long int clr) {
+    cv_color = clr;
+}
 
 static int action_redraw_cb(Ihandle* canvas)
 {
-    cdCanvas* cd_canvas = (cdCanvas*)IupGetAttribute(canvas, "_CD_CANVAS");
+    cd_canvas = (cdCanvas*)IupGetAttribute(canvas, "_CD_CANVAS");
 
     if (cd_canvas == NULL)
     {
@@ -42,7 +96,7 @@ static int action_redraw_cb(Ihandle* canvas)
     // Suite du dessin...
     cdCanvasActivate(cd_canvas);
     cdCanvasClear(cd_canvas);
-    cdCanvasForeground(cd_canvas, CD_BLUE);
+    cdCanvasForeground(cd_canvas, cv_color);
     cdCanvasLine(cd_canvas, 10, 10, 150, 150);
 
     // Si tu utilises CD_IUPDBUFFER, il faut quémander le swap à la fin :
@@ -65,12 +119,14 @@ static int unmap_cb(Ihandle* canvas)
 
 Ihandle* canvas_box_create(void)
 {
+    cv_color = CD_BLUE;
     canvas = IupCanvas(NULL);
     IupSetAttribute(canvas, "RASTERSIZE", "300x200");
     IupSetAttribute(canvas, "EXPAND", "YES");
 
     IupSetCallback(canvas, "ACTION", (Icallback)action_redraw_cb);
     IupSetCallback(canvas, "UNMAP_CB", (Icallback)unmap_cb);
+    IupSetCallback(canvas, "MOTION_CB", (Icallback)motion_cb);
 
     // Ne pas oublier le NULL final pour IupVbox
     Ihandle* vbox = IupVbox(canvas, NULL);

@@ -8,6 +8,8 @@
 /**
  * @todo write docs
  */
+//void point_at(int x, int y);
+
 class Drawings : public Iup::Vbox
 {
 public:
@@ -24,6 +26,9 @@ public:
     void setColour(int r, int g, int b);
     void setColour(char* rgb);
     //void draw_plus();
+    void draw_plus(long int colour);
+/*private :
+    static int motion_cb(Ihandle* ih, int x, int y, char* status);*/
 };
 
 #endif // DRAWINGS_H

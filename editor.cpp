@@ -78,9 +78,20 @@ Ihandle* create_a_colr_from_image_from_string(int w, int h, char* col) {
 
 static int colr_cb(Ihandle *ih) {
     //exit(0);
-    char* col_code = (char*)malloc(strlen(IupGetAttribute(ih, "COLOURCODE")) + 1);
-    strcpy(col_code, IupGetAttribute(ih, "COLOURCODE"));
-
+    //char* col_code = (char*)malloc(strlen(IupGetAttribute(ih, "COLOURCODE")) + 1);
+    //strcpy(col_code, IupGetAttribute(ih, "COLOURCODE")); //ABSOLUT KRAP
+    Colour *col = (Colour*)IupGetAttribute(ih, "COLOURCODE");
+    if (col != NULL) {
+        Colour col_no_ptr = *col;
+        unsigned char r = col_no_ptr.R;
+        unsigned char g = col_no_ptr.G;
+        unsigned char b = col_no_ptr.B;
+        //IupMessage("Tiens, tiens...", "Le dévelopeur a fait une boulette");
+        d->draw_plus(cdEncodeColor(r, g, b));
+    } else {
+        IupMessage("Tiens, tiens...", "Le dévelopeur a fait une boulette");
+        return IUP_DEFAULT;
+    }
     return IUP_DEFAULT;
 }
 
@@ -132,28 +143,31 @@ int Editor::neweditor(int argc, char** argv)
     all_colour_btns.push_back(colbtn(IupButton(NULL, NULL), 0, 255, 0));
     all_colour_btns.push_back(colbtn(IupButton(NULL, NULL), 0, 0, 255));
     all_colour_btns.push_back(colbtn(IupButton(NULL, NULL), 0, 0, 0));
-    //all_colour_btns.push_back(IupButton("Orange", NULL));
-    /*all_colour_btns.push_back(IupButton("Jaune", NULL));
-    all_colour_btns.push_back(IupButton("Violet", NULL));
-    all_colour_btns.push_back(IupButton("Blanc", NULL));
-    all_colour_btns.push_back(IupButton("Bleu clair", NULL));
-    all_colour_btns.push_back(IupButton("Gris", NULL));*/
+    all_colour_btns.push_back(colbtn(IupButton(NULL, NULL), 255, 125, 0));
+    all_colour_btns.push_back(colbtn(IupButton(NULL, NULL), 255, 255, 0));
+    all_colour_btns.push_back(colbtn(IupButton(NULL, NULL), 110, 0, 185));
+    all_colour_btns.push_back(colbtn(IupButton(NULL, NULL), 255, 255, 255));
+    all_colour_btns.push_back(colbtn(IupButton(NULL, NULL), 0, 255, 255));
+    all_colour_btns.push_back(colbtn(IupButton(NULL, NULL), 127, 127, 127));
     //char colr[25] = "255 0 0";
 
-    //IupSetAttribute(all_colour_btns[0].btn, "COLOURCODE", "255 0 0");
+
 
 
 
     for (int i = 0; i < all_colour_btns.size(); i++) {
         Ihandle* colrr = create_a_colr_from_image(24, 24, all_colour_btns[i].col.R, all_colour_btns[i].col.G, all_colour_btns[i].col.B);
         IupSetAttributeHandle(all_colour_btns[i].btn, "IMAGE", colrr);
+        IupSetAttribute(all_colour_btns[i].btn, "COLOURCODE", (char*)&all_colour_btns[i].col);
+        IupSetCallback(all_colour_btns[i].btn, "ACTION", (Icallback)colr_cb);
         colours->Append(all_colour_btns[i].btn);
     }
-    IupSetCallback(all_colour_btns[0].btn, "ACTION", (Icallback)colr_cb);
+
 
 
 
     d = new Drawings(argc, argv);
+
 
     item_quit = IupItem("Quitter", NULL);
 
