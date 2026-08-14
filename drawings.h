@@ -26,7 +26,7 @@ public:
     void setColour(int r, int g, int b);
     void setColour(char* rgb);
     //void draw_plus();
-    void draw_plus(long int colour);
+    void setColour(long int colour);
 /*private :
     static int motion_cb(Ihandle* ih, int x, int y, char* status);*/
 };

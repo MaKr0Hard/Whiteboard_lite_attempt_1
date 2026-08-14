@@ -87,7 +87,7 @@ static int colr_cb(Ihandle *ih) {
         unsigned char g = col_no_ptr.G;
         unsigned char b = col_no_ptr.B;
         //IupMessage("Tiens, tiens...", "Le dévelopeur a fait une boulette");
-        d->draw_plus(cdEncodeColor(r, g, b));
+        d->setColour(cdEncodeColor(r, g, b));
     } else {
         IupMessage("Tiens, tiens...", "Le dévelopeur a fait une boulette");
         return IUP_DEFAULT;

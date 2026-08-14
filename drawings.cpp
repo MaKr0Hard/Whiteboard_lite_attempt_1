@@ -27,22 +27,50 @@ std::vector <Point> last_points;
 typedef struct {
     std::vector <Point> points;
     int width;
-    unsigned char r;
-    unsigned char g;
-    unsigned char b;
+    long int colour;
 
 } Stroke;
 std::vector <Stroke> last_strokes;
 
+void newvec(long int colour) {
+    Stroke s;
+    s.points = last_points;
+    s.colour = colour;
+    s.width = 0;
+    last_strokes.push_back(s);
+    last_points = std::vector <Point> ({});
+}
+
 void redraw() {
+
     for (int i = 0; i < last_points.size(); i++) {
         pointat(last_points[i].x, last_points[i].y);
+    }
+}
+
+void redraw_plus() {
+    for (int i = 0; i < last_strokes.size(); i++) {
+        Point p;
+        p.x = last_strokes[i].points[0].x;
+        p.y = last_strokes[i].points[0].y;
+        for (int j = 0; j < last_strokes[i].points.size(); j++) {
+                change_colour_iup_canvas(last_strokes[i].colour);
+            if ((p.x == last_strokes[i].points[j].x) && (p.y == last_strokes[i].points[j].y))  {
+
+                pointat(p.x, p.y);
+            } else {
+                lineat(p.x, p.y, last_strokes[i].points[j].x, last_strokes[i].points[j].y);
+                p.x = last_strokes[i].points[j].x;
+                p.y = last_strokes[i].points[j].y;
+            }
+        }
     }
 }
 
 void point_at(int x, int y) {
     //printf("Mouse moved to (%d, %d)\n", x, y);
     Point point;
+    change_colour_iup_canvas(cdEncodeColor(255, 0, 0));
     point.x = x;
     point.y = y;
     last_points.push_back(point);
@@ -52,7 +80,9 @@ void point_at(int x, int y) {
 Drawings::Drawings(int argc, char** argv) : Iup::Vbox(IupVbox(NULL))
 {
     cvas = canvas_box_create();
+    //clear_the_cvas();
     //point_at(10, 10, );
+    set_width_stroke(10);
     this->Append(cvas);
 
 }
@@ -70,7 +100,7 @@ void Drawings::setColour(char* rgb){
 
 }
 
-void Drawings::draw_plus(long int colour) {
-    change_colour_iup_canvas(colour);
-    update_canvas();
+void Drawings::setColour(long int colour) {
+    set_canvas_colour(colour);
+
 }

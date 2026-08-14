@@ -20,5 +20,8 @@ void do_a_mark(int x, int y);
 Ihandle* canvas_box_create(void);
 void pointat(int x, int y);
 void set_colour_canvas (long int col);
+void lineat(int x1, int y1, int x2, int y2);
+void set_width_stroke (int width);
+void set_canvas_colour(long int clr);
 
 #endif

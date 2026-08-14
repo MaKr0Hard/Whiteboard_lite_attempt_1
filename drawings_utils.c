@@ -5,18 +5,52 @@
 
 Ihandle* canvas;
 cdCanvas* cd_canvas;
-long int cv_color; //short for canvas colour
+long int cv_color = 0; //short for canvas colour
+long int cv_color_now = 0;
+int test = 0;
+int newvec_already_done = 0;
+int first_point = 1;
+int width_stroke = 0;
 
-void set_colour_canvas (long int col) {
-        cv_color = col;
-        cdCanvasForeground(cd_canvas, col);
+void change_colour_iup_canvas(long int clr) {
+    cv_color = clr;
+}
+
+void set_canvas_colour(long int clr) {
+    cv_color_now = clr;
+}
+
+void set_width_stroke (int width) {
+    width_stroke = width;
+}
+
+void lineat(int x1, int y1, int x2, int y2) {
+    int height;
+    cdCanvasSetForeground(cd_canvas, cv_color);
+    cdCanvasLineWidth(cd_canvas, width_stroke);
+    cdCanvasGetSize(cd_canvas, NULL, &height, NULL, NULL);
+    cdCanvasLineJoin(cd_canvas, CD_CIRCLE);
+    int new_y1 = height - y1 - 1;
+    int new_y2 = height - y2 - 1;
+    cdCanvasLine(cd_canvas, x1, new_y1, x2, new_y2);
+}
+
+void clear_the_cvas() {
+    cdCanvasClear(cd_canvas);
+}
+
+int resize_cb(Ihandle *ih) {
+    if (test != 0) {
+        clear_the_cvas();
+    }
+return IUP_DEFAULT;
 }
 
 void pointat(int x, int y) {
     int height;
     cdCanvasGetSize(cd_canvas, NULL, &height, NULL, NULL);
     cdCanvasSetForeground(cd_canvas, cv_color);
-    cdCanvasMarkSize(cd_canvas, 10); /* Dot diameter in pixels */
+    cdCanvasMarkSize(cd_canvas, width_stroke); /* Dot diameter in pixels */
     cdCanvasMarkType(cd_canvas, CD_CIRCLE); /* Solid dot style */
 
     int new_y = height - y - 1;
@@ -24,7 +58,7 @@ void pointat(int x, int y) {
 }
 
 int motion_cb(Ihandle* ih, int x, int y, char* status) {
-    int first_point = 1;
+
 
     if (iup_isbutton1(status)) {
         if (first_point == 1) {
@@ -34,12 +68,16 @@ int motion_cb(Ihandle* ih, int x, int y, char* status) {
 
             /*cdCanvasMark(cd_canvas, x, y);*/
 
-
+            newvec(cv_color_now);
+            cv_color = cv_color_now;
             point_at(x, y);
+            first_point = 0;
         } else {
             //nothing for now
+            point_at(x, y);
+            first_point = 0;
         }
-        first_point = 0;
+
     } else {
         first_point = 1;
     }
@@ -56,9 +94,7 @@ int update_canvas() {
     return IUP_DEFAULT;
 }
 
-void change_colour_iup_canvas(long int clr) {
-    cv_color = clr;
-}
+
 
 static int action_redraw_cb(Ihandle* canvas)
 {
@@ -95,13 +131,20 @@ static int action_redraw_cb(Ihandle* canvas)
 
     // Suite du dessin...
     cdCanvasActivate(cd_canvas);
+    if (test == 0) {
     cdCanvasClear(cd_canvas);
     cdCanvasForeground(cd_canvas, cv_color);
-    cdCanvasLine(cd_canvas, 10, 10, 150, 150);
+    test++;
+    }
+
+    //cdCanvasLine(cd_canvas, 10, 10, 150, 150);
 
     // Si tu utilises CD_IUPDBUFFER, il faut quémander le swap à la fin :
     // cdCanvasFlush(cd_canvas);
 
+
+    redraw_plus();
+    //redraw();
     return IUP_DEFAULT;
 }
 
@@ -123,6 +166,7 @@ Ihandle* canvas_box_create(void)
     canvas = IupCanvas(NULL);
     IupSetAttribute(canvas, "RASTERSIZE", "300x200");
     IupSetAttribute(canvas, "EXPAND", "YES");
+    IupSetCallback(canvas, "RESIZE_CB", (Icallback)resize_cb);
 
     IupSetCallback(canvas, "ACTION", (Icallback)action_redraw_cb);
     IupSetCallback(canvas, "UNMAP_CB", (Icallback)unmap_cb);
