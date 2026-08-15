@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 
-bool MyCanvasBox::InitializeEnvironment(int* argc, char*** argv)
+bool MyCanvasBox::InitializeEnvironment(int* argc, char*** argv) // Yeah, you'll see a lot of sh*t in french
 {
     // Force le backend X11 sous Linux avant toute initialisation GTK/IUP
     #if defined(__linux__) || defined(__unix__)

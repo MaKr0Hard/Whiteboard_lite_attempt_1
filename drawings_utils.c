@@ -79,7 +79,8 @@ int motion_cb(Ihandle* ih, int x, int y, char* status) {
             first_point = 0;
         } else {
             //nothing for now
-            point_at(x, y, cv_color, width_stroke);
+            //point_at(x, y, cv_color, width_stroke);
+            line_at_remember_last_point(x, y, cv_color, width_stroke);
             first_point = 0;
         }
 
@@ -102,7 +103,7 @@ int update_canvas() {
 
 
 
-static int action_redraw_cb(Ihandle* canvas)
+static int action_redraw_cb(Ihandle* canvas) //TODO : Fix that ugly bug that keeps redrawing the canvas when hovering over btns
 {
     cd_canvas = (cdCanvas*)IupGetAttribute(canvas, "_CD_CANVAS");
 
@@ -118,6 +119,7 @@ static int action_redraw_cb(Ihandle* canvas)
 
         // 2. Création du canvas CD
         cd_canvas = cdCreateCanvas(CD_IUP, canvas);
+
 
         if (!cd_canvas)
         {
@@ -168,6 +170,7 @@ static int unmap_cb(Ihandle* canvas)
     }
     return IUP_DEFAULT;
 }
+
 
 
 Ihandle* canvas_box_create(void)

@@ -60,6 +60,7 @@ void redraw_plus() { // a better redraw **MAGIC**
 
                 pointat(last_strokes[i].points[j].x, last_strokes[i].points[j].y, last_strokes[i].colour, last_strokes[i].width);
             } else {
+                pointat(last_strokes[i].points[j].x, last_strokes[i].points[j].y, last_strokes[i].colour, last_strokes[i].width);
                 lineat(p.x, p.y, last_strokes[i].points[j].x, last_strokes[i].points[j].y, last_strokes[i].colour, last_strokes[i].width);
                 p.x = last_strokes[i].points[j].x;
                 p.y = last_strokes[i].points[j].y;
@@ -77,6 +78,18 @@ void point_at(int x, int y, long int colour, int width) { // If you want push_ba
     //last_points.push_back(point);
     last_strokes[last_strokes.size() - 1].points.push_back(point);  // just .size() segfaults but with a " - 1 " it runs like fine whime
     pointat(x, y, colour, width);
+}
+
+void line_at_remember_last_point(int x, int y, long int colour, int width) { // If you want push_back info line by line
+    //printf("Mouse moved to (%d, %d)\n", x, y);
+    Point point;
+    //change_colour_iup_canvas();
+    point.x = x;
+    point.y = y;
+    //last_points.push_back(point);
+    last_strokes[last_strokes.size() - 1].points.push_back(point);  // just .size() segfaults but with a " - 1 " it runs like fine whime
+    pointat(x, y, colour, width);
+    lineat(last_strokes[last_strokes.size() - 1].points[last_strokes[last_strokes.size() - 1].points.size() - 2].x, last_strokes[last_strokes.size() - 1].points[last_strokes[last_strokes.size() - 1].points.size() - 2].y, x, y, colour, width); //TODO : Make this a litte more NULL/nullptr safe
 }
 
 Drawings::Drawings(int argc, char** argv) : Iup::Vbox(IupVbox(NULL))
@@ -109,4 +122,10 @@ void Drawings::setColour(long int colour) {
 
 void Drawings::setWidth(int width) {
     set_width_stroke(width);
+}
+
+void Drawings::clear() {
+    last_strokes = std::vector <Stroke> ({});
+    newvec(0, 2);
+    clear_the_cvas();
 }

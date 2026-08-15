@@ -28,6 +28,7 @@ public:
     //void draw_plus();
     void setColour(long int colour);
     void setWidth(int width);
+    void clear();
 /*private :
     static int motion_cb(Ihandle* ih, int x, int y, char* status);*/
 };

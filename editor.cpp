@@ -111,6 +111,11 @@ static int colr_cb(Ihandle *ih) {
     return IUP_DEFAULT;
 }
 
+static int clear_cb(Ihandle *ih) {
+    d->clear();
+    return IUP_DEFAULT;
+}
+
 Editor::Editor()
 {
 
@@ -148,10 +153,13 @@ int Editor::neweditor(int argc, char** argv)
     //cdInitContextPlus();
     Ihandle *dlg, *main_vbox, *menu_bar;
     Ihandle *file_menu, *item_quit;
-    Ihandle *subm1;
+    Ihandle *edit_menu, *item_clear;
+    Ihandle *subm1, *subm2;
     Ihandle* btn;
     Ihandle *db_hb;
     Ihandle *slider, *textview_sli;
+    Ihandle *toolbar;
+    Ihandle *widthselector;
     Iup::Hbox *colours = new Iup::Hbox;
     std::vector <Col_btn> all_colour_btns;
 #define ACB all_colour_btns.btn
@@ -180,26 +188,32 @@ int Editor::neweditor(int argc, char** argv)
         colours->Append(all_colour_btns[i].btn);
     }
     slider = IupVal(IUP_HORIZONTAL);
-    textview_sli = IupLabel(NULL);
+    textview_sli = IupLabel(NULL);     // Stands for textview slider
     IupSetAttribute(slider, "MIN", "1");
     IupSetAttribute(slider, "MAX", "100");
     IupSetAttribute(slider, "SIZE", "150x1");
     IupSetCallback(slider, "VALUECHANGED_CB", (Icallback)slider_moved_cb);
     IupSetAttributeHandle(slider, "TEXTVIEW", textview_sli);
-    colours->Append(slider);
-    colours->Append(textview_sli); //TODO : Add a drop btn to choose precision or type number out yourself
+    //TODO : Add a drop btn to choose precision or type number out yourself
 
+    widthselector = IupHbox(slider, textview_sli, NULL);
+    toolbar = IupHbox(colours->GetHandle(), widthselector, NULL);
     d = new Drawings(argc, argv);
 
 
     item_quit = IupItem("Quitter", NULL);
-
     IupSetCallback(item_quit, "ACTION", (Icallback)quit_cb);
     file_menu = IupMenu(item_quit, NULL);
     subm1 = IupSubmenu("Fichier", file_menu);
-    menu_bar = IupMenu(subm1, NULL);
 
-    main_vbox = IupVbox(colours->GetHandle(), d->GetHandle(),  NULL); //DONE
+    item_clear = IupItem("Effacer tout", NULL);
+    IupSetCallback(item_clear, "ACTION", (Icallback)clear_cb);
+    edit_menu = IupMenu(item_clear, NULL);
+    subm2 = IupSubmenu("Éditer", edit_menu);
+
+    menu_bar = IupMenu(subm1, subm2, NULL);
+
+    main_vbox = IupVbox(toolbar, d->GetHandle(),  NULL); //DONE
 
     dlg = IupDialog(main_vbox);
     IupSetAttributeHandle(dlg, "MENU", menu_bar);
