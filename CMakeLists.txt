@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(Whiteboard_lite_attempt_1 LANGUAGES CXX C)
 
-add_executable(Whiteboard_lite_attempt_1 main.cpp mainwindow.c editor.cpp drawings.cpp Some_canvas_window.cpp drawings_utils.c)
+add_executable(Whiteboard_lite_attempt_1 main.cpp mainwindow.c editor.cpp drawings.cpp Some_canvas_window.cpp drawings_utils.c pdf_stuff.cpp)
 
 install(TARGETS Whiteboard_lite_attempt_1 RUNTIME DESTINATION bin)
 
