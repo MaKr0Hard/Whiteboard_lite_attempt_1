@@ -62,6 +62,11 @@ void pointat(int x, int y, long int colour, int width) {
     cdCanvasMark(cd_canvas, x, new_y);
 }
 
+void putImage(int iw, int ih, const unsigned char* r, const unsigned char* g, const unsigned char* b, int x, int y, int w, int h, int xmin, int xmax, int ymin, int ymax) {
+    cdfCanvasPutImageRectRGB(cd_canvas, iw, ih, r, g, b, x, y, w, h, xmin, xmax, ymin, ymax);
+}
+
+
 int motion_cb(Ihandle* ih, int x, int y, char* status) {
 
 

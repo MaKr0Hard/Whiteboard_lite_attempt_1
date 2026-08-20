@@ -24,5 +24,6 @@ void lineat(int x1, int y1, int x2, int y2, long int colour, int width);
 void set_width_stroke (int width);
 void set_canvas_colour(long int clr);
 void clear_the_cvas();
+void putImage( int iw, int ih, const unsigned char *r, const unsigned char *g, const unsigned char *b, int x, int y, int w, int h, int xmin, int xmax, int ymin, int ymax);
 
 #endif

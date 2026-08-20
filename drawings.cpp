@@ -14,7 +14,7 @@ extern "C" {
 #include "drawings_utils.h"
 #include "drawings_c.h"
 }
-
+#include "pdf_stuff.h"
 
 
 Ihandle* cvas;
@@ -94,10 +94,13 @@ void line_at_remember_last_point(int x, int y, long int colour, int width) { // 
 
 Drawings::Drawings(int argc, char** argv) : Iup::Vbox(IupVbox(NULL))
 {
+    PdfStuff *s = new PdfStuff();
     cvas = canvas_box_create();
     //clear_the_cvas();
     //point_at(10, 10, );
     set_width_stroke(10);
+    putImage(s->getwidth(), s->getheight(), s->getpixmapR(), s->getpixmapG(), s->getpixmapB(), s->getwidth(), s->getheight(), 0, 0, 0, 0, 0, 0);
+    update_canvas();
     this->Append(cvas);
 
 }
