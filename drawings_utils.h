@@ -25,5 +25,6 @@ void set_width_stroke (int width);
 void set_canvas_colour(long int clr);
 void clear_the_cvas();
 void putImage( int iw, int ih, const unsigned char *r, const unsigned char *g, const unsigned char *b, int x, int y, int w, int h, int xmin, int xmax, int ymin, int ymax);
+void pixelat(int x, int y, unsigned char r, unsigned char g, unsigned char b);
 
 #endif

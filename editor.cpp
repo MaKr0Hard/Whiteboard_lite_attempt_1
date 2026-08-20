@@ -88,7 +88,7 @@ static int slider_moved_cb(Ihandle *ih) {
     IupSetAttribute(textview, "TITLE", title);
     }
     //printf("%d\n", width);
-    d->setWidth(width);
+    d->setblah(width);
     return IUP_DEFAULT;
 }
 

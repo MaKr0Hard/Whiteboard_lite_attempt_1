@@ -18,7 +18,7 @@ void change_colour_iup_canvas(long int clr) { //TODO : Remove that
     cdCanvasSetForeground(cd_canvas, cv_color);
 }
 
-void set_canvas_colour(long int clr) { // line 15 is basically the same thing
+void set_canvas_colour(long int clr) { // line 16 is basically the same thing
     cv_color = clr;
     cdCanvasSetForeground(cd_canvas, cv_color);
 }
@@ -63,7 +63,15 @@ void pointat(int x, int y, long int colour, int width) {
 }
 
 void putImage(int iw, int ih, const unsigned char* r, const unsigned char* g, const unsigned char* b, int x, int y, int w, int h, int xmin, int xmax, int ymin, int ymax) {
-    cdfCanvasPutImageRectRGB(cd_canvas, iw, ih, r, g, b, x, y, w, h, xmin, xmax, ymin, ymax);
+    int height;
+    int width;
+    cdCanvasGetSize(cd_canvas, &width, NULL, NULL, NULL);
+    cdCanvasGetSize(cd_canvas, NULL, &height, NULL, NULL);
+    int new_y = height - y;
+    int new_ymin = height - ymin;
+    int new_ymax = height - ymax;
+    int new_x = width - x;
+    cdCanvasPutImageRectRGB(cd_canvas, iw, ih, r, g, b, x, new_y, w, h, xmin, xmax, ymin, ymax);
 }
 
 
@@ -98,6 +106,14 @@ int motion_cb(Ihandle* ih, int x, int y, char* status) {
 }
 
 void do_a_mark(int x, int y) {
+
+}
+
+void pixelat(int x, int y, unsigned char r, unsigned char g, unsigned char b) {
+    /*int height;
+    cdCanvasGetSize(cd_canvas, NULL, &height, NULL, NULL);
+    int new_y = height - y - 1;*/
+    //cdCanvasPixel(cd_canvas, x, y, cdEncodeColor(r, g, b));
 
 }
 
@@ -156,8 +172,8 @@ static int action_redraw_cb(Ihandle* canvas) //TODO : Fix that ugly bug that kee
     // Si tu utilises CD_IUPDBUFFER, il faut quémander le swap à la fin :
     // cdCanvasFlush(cd_canvas);
 
-
-    redraw_plus();
+    redraw_bg();
+    redraw_strokes();
     //redraw();
     cv_color = cv_colour2;
     width_stroke = width_stroke_2;
@@ -182,7 +198,7 @@ Ihandle* canvas_box_create(void)
 {
     cv_color = CD_BLUE;
     canvas = IupCanvas(NULL);
-    IupSetAttribute(canvas, "RASTERSIZE", "300x200");
+    IupSetAttribute(canvas, "RASTERSIZE", "500x500");
     IupSetAttribute(canvas, "EXPAND", "YES");
     IupSetCallback(canvas, "RESIZE_CB", (Icallback)resize_cb);
     newvec(cv_color, width_stroke);

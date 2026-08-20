@@ -19,13 +19,19 @@ public :
     unsigned char* getpixmapB();
     int getheight();
     int getwidth();
-
-private:
-    int width = 0;
-    int height = 0;
+    void raylib_test();
+    std::vector<unsigned char> getpixmapRvectr();
+    std::vector<unsigned char> getpixmapGvectr();
+    std::vector<unsigned char> getpixmapBvectr();
     std::vector<unsigned char> R;
     std::vector<unsigned char> G;
     std::vector<unsigned char> B;
+    int width = 0;
+    int height = 0;
+private:
+
+
+    void raylib_stuff();
 };
 
 #endif

@@ -25,6 +25,7 @@ public:
     ~Drawings();
     void setColour(int r, int g, int b);
     void setColour(char* rgb);
+    void setblah(int balh);
     //void draw_plus();
     void setColour(long int colour);
     void setWidth(int width);

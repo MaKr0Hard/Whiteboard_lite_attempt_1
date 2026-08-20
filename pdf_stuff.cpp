@@ -6,7 +6,8 @@
 
 #include <mupdf/fitz.h>
 #include <mupdf/pdf.h>
-
+#include <raylib.h>
+#include <thread>
 
 
 PdfStuff::PdfStuff()
@@ -38,11 +39,11 @@ PdfStuff::PdfStuff()
         doc = fz_open_document(ctx, "input.pdf");
 
         // 3. Load the desired page (0-indexed)
-        int page_number = 1;
+        int page_number = 0;
         page = fz_load_page(ctx, doc, page_number);
 
 
-        fz_matrix transform = fz_scale(2.0, 2.0);
+        fz_matrix transform = fz_scale(1.0, 1.0);
 
         fz_pixmap *pix = fz_new_pixmap_from_page_number(ctx, doc, page_number, transform, fz_device_rgb(ctx), 0);
         width = fz_pixmap_width(ctx, pix);
@@ -58,9 +59,14 @@ PdfStuff::PdfStuff()
                 G.push_back(pixels[index + 1]);
                 B.push_back(pixels[index + 2]);
 
+                /*R.push_back(254);
+                G.push_back(0);
+                B.push_back(0);*/
 
             }
         }
+        printf("width : %d\n", width);
+        printf("height : %d\n", height);
         fz_drop_pixmap(ctx, pix);
     } fz_always(ctx) {
         // 6. Clean up resources in reverse order
@@ -85,13 +91,61 @@ unsigned char* PdfStuff::getpixmapB() {
     return B.data();
 }
 
+std::vector<unsigned char> PdfStuff::getpixmapRvectr() { //TODO: make all this a little more nullptr safe
+    return R;
+}
+
+std::vector<unsigned char> PdfStuff::getpixmapGvectr() {
+    return G;
+}
+
+std::vector<unsigned char> PdfStuff::getpixmapBvectr() {
+    return B;
+}
+
 int PdfStuff::getheight() {
+    printf("heightt : %d\n", height);
     return height;
 }
 
 int PdfStuff::getwidth() {
     return width;
 }
+
+void PdfStuff::raylib_test() {
+    raylib_stuff();
+
+}
+
+void PdfStuff::raylib_stuff() {
+std::vector <unsigned char> pixels;
+for (int i = 0; i < height * width; i++) {
+    pixels.push_back(R[1]);
+    pixels.push_back(G[1]);
+    pixels.push_back(B[1]);
+}
+
+    Image img = {
+        .data = pixels.data(),
+        .width = width,
+        .height = height,
+        .mipmaps = 1,
+        .format = PIXELFORMAT_UNCOMPRESSED_R8G8B8
+    };
+
+    Texture2D texture = LoadTextureFromImage(img);
+    InitWindow(400, 600, "Test");
+    while (!WindowShouldClose()){
+        BeginDrawing();
+        ClearBackground(BLACK);
+        DrawTexture(texture, 50, 50, WHITE);
+        EndDrawing();
+    }
+    UnloadTexture(texture);
+
+    CloseWindow();
+}
+
 
 
 // This is where all the pdf stuuf will be (muPDF btw)

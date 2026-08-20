@@ -10,6 +10,7 @@
 #include <cd.h>
 #include <cstdio>
 #include <vector>
+#include <thread>
 extern "C" {
 #include "drawings_utils.h"
 #include "drawings_c.h"
@@ -20,8 +21,15 @@ extern "C" {
 Ihandle* cvas;
 //cdCanvas *cdcan;
 //Ihandle* iupcan;
+double blah = 1.0;
 
-
+typedef struct { //TODO: Put thos into classes to be able to create more than one draw_widget
+    std::vector <unsigned char> r;
+    std::vector <unsigned char> g;
+    std::vector <unsigned char> b;
+    int width;
+    int height;
+} Background;
 
 //std::vector <Point> last_points;
 typedef struct {
@@ -32,6 +40,12 @@ typedef struct {
 } Stroke;
 std::vector <Stroke> last_strokes;
 
+
+typedef struct {
+    std::vector <Stroke> last_strokes;
+    Background background;
+} Page;
+Page page;
 
 void newvec(long int colour, int width) { // If you want to push_back info for a STROKE
     Stroke s;
@@ -49,7 +63,7 @@ void newvec(long int colour, int width) { // If you want to push_back info for a
     }
 }*/
 
-void redraw_plus() { // a better redraw **MAGIC**
+void redraw_strokes() { // a better redraw **MAGIC**
     for (int i = 0; i < last_strokes.size(); i++) {
         Point p;
         p.x = last_strokes[i].points[0].x;
@@ -67,6 +81,32 @@ void redraw_plus() { // a better redraw **MAGIC**
             }
         }
     }
+}
+
+void redraw_bg() {
+    /*for (int y = 0; y < page.background.height; ++y){
+        for (int x = 0; x < page.background.width; x++) {
+            if (((y * page.background.height + x) <= page.background.r.size())
+                &&
+                ((y * page.background.height + x) <= page.background.g.size())
+                &&
+                ((y * page.background.height + x) <= page.background.b.size())
+            ) {
+                //pixelat(x, y, page.background.r[y * page.background.height + x], page.background.g[y * page.background.height + x], page.background.b[y * page.background.height + x]);3
+                pointat(x, y, cdEncodeColor(page.background.r[y * page.background.height + x], page.background.g[y * page.background.height + x], page.background.b[y * page.background.height + x]), 2);
+            }
+        }
+    }*/
+    putImage(page.background.width / blah , page.background.height, page.background.r.data(), page.background.g.data(), page.background.b.data(), 0, page.background.height, page.background.width, page.background.height, 0, 0, 0, 0);
+}
+
+void redraw_plus() {
+    redraw_bg();
+    redraw_strokes();
+}
+
+void redraw_plus_on_a_new_thread(){
+    std::thread(redraw_plus);
 }
 
 void point_at(int x, int y, long int colour, int width) { // If you want push_back info point by point
@@ -99,10 +139,32 @@ Drawings::Drawings(int argc, char** argv) : Iup::Vbox(IupVbox(NULL))
     //clear_the_cvas();
     //point_at(10, 10, );
     set_width_stroke(10);
-    putImage(s->getwidth(), s->getheight(), s->getpixmapR(), s->getpixmapG(), s->getpixmapB(), s->getwidth(), s->getheight(), 0, 0, 0, 0, 0, 0);
-    update_canvas();
-    this->Append(cvas);
 
+    //update_canvas();
+    //s->raylib_test();
+    this->Append(cvas);
+    //putImage(s->getwidth(), s->getheight(), s->getpixmapR(), s->getpixmapG(), s->getpixmapB(), 100, 100, 0, 0, 0, 0, 0, 0);
+    std::vector<unsigned char> r = s->getpixmapRvectr();
+    std::vector<unsigned char> g = s->getpixmapGvectr();
+    std::vector<unsigned char> b = s->getpixmapBvectr();
+    int pdf_height = s->getheight();
+    int pdf_width = s->getwidth();
+    page.background.width = pdf_width;
+    page.background.height = pdf_height;
+
+    for (int y = 0; y < pdf_height; ++y) {
+        for (int x = 0; x < pdf_width; x++) {
+
+            //pointat(x, y, cdEncodeColor(r[y * 297 + x], g[y * 297 + x], b[y * 297 + x]), 2);
+            page.background.r.push_back(r[y * pdf_height +x]);
+            page.background.g.push_back(g[y * pdf_height +x]);
+            page.background.b.push_back(b[y * pdf_height +x]);
+
+        }
+    }
+
+
+    update_canvas();
 }
 
 Drawings::~Drawings()
@@ -131,4 +193,9 @@ void Drawings::clear() {
     last_strokes = std::vector <Stroke> ({});
     newvec(0, 2);
     clear_the_cvas();
+}
+
+void Drawings::setblah(int balh) {
+    blah = balh / 100;
+    redraw_plus();
 }
